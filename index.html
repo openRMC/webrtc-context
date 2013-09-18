@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>getUserMedia Test</title>
+<script type="text/javascript" src="js/adapter.js"></script>
+<script type="text/javascript" src="js/getusermedia.js"></script>
+<style type="text/css">
+.error {
+	font-weight: bold;
+}
+
+.red {
+	color: red ;
+}
+
+.green {
+	color: green ; 
+}
+
+.blue {
+	color : blue;
+}
+</style>
+</head>
+<body>
+
+<h1>getUserMedia Test</h1>
+
+<div><input id="chkAudio" type="checkbox" checked="checked"> Audio</div>
+<div><input id="chkVideo" type="checkbox" checked="checked"> Video</div>
+<button onclick="doGUM()">Call getUserMedia</button>
+
+<div id="divResults" style="display: none;">
+	<span>Audio : </span><span id="txtAudio"></span>
+	<span>Video : </span><span id="txtVideo"></span>
+</div>
+<div id="divError" class="error" style="display: none;">
+<span>Error : </span><span id="errText" class="red"></span>
+</div>
+
+<script type="text/javascript">
+var divError = document.getElementById('divError') ;
+var txtError = document.getElementById('errText') ;
+var chkAudio = document.getElementById('chkAudio') ;
+var chkVideo = document.getElementById('chkVideo') ;
+var txtAudio = document.getElementById('txtAudio') ;
+var txtVideo = document.getElementById('txtVideo') ;
+
+function show(elem) {
+	elem.style.display='block' ;
+}
+
+function hide(elem) {
+	elem.style.display='none' ;
+}
+
+function setResultText(elem, value) {
+	elem.className=value?'green':'blue' ;
+	elem.innerHTML=value?'YES':'NO' ;
+}
+
+function doGUM() {
+	hide(divError) ;
+	hide(divResults) ;
+	divError.style.display='none' ;
+	openrmc.webrtc.api.getUserMedia({
+		audio: chkAudio.checked,
+		video : chkVideo.checked,
+		success : function(cxt) {
+			setResultText(txtAudio, cxt.isrtcaudioavailable()) ;
+			setResultText(txtVideo, cxt.isrtcvideoavailable()) ;
+			show(divResults) ;
+		},
+		failure : function(cxt) {
+			console.log('Error - ' + cxt.getError()) ;
+			txtError.innerHTML=cxt.getError() ;
+			show(divError) ;
+		}
+	}) ;
+
+}
+</script>
+</body>
+</html>
